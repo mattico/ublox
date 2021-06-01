@@ -11,6 +11,7 @@ readme = "../README.md"
 [features]
 default = ["std"]
 std = []
+fixed-point = ["ublox_derive/fixed-point"]
 
 [dependencies]
 chrono = { version = "0.4.19", default-features = false, features = [] }

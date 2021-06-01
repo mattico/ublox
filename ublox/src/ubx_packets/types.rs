@@ -7,22 +7,47 @@ use core::convert::TryFrom;
 #[derive(Debug, Clone, Copy)]
 pub struct Position {
     /// Logitude in degrees
+    #[cfg(not(feature = "fixed-point"))]
     pub lon: f64,
 
+    /// Logitude in degrees
+    #[cfg(feature = "fixed-point")]
+    pub lon: i32,
+
     /// Latitude in degrees
+    #[cfg(not(feature = "fixed-point"))]
     pub lat: f64,
 
+    /// Latitude in degrees
+    #[cfg(feature = "fixed-point")]
+    pub lat: i32,
+
     /// Altitude in meters
+    #[cfg(not(feature = "fixed-point"))]
     pub alt: f64,
+
+    /// Altitude in meters
+    #[cfg(feature = "fixed-point")]
+    pub alt: i32,
 }
 
 #[derive(Debug, Clone, Copy)]
 pub struct Velocity {
     /// m/s over the ground
+    #[cfg(not(feature = "fixed-point"))]
     pub speed: f64,
 
+    /// m/s over the ground
+    #[cfg(feature = "fixed-point")]
+    pub speed: u32,
+
     /// Heading in degrees
+    #[cfg(not(feature = "fixed-point"))]
     pub heading: f64, // degrees
+
+    /// Heading in degrees
+    #[cfg(feature = "fixed-point")]
+    pub heading: i32, // degrees
 }
 
 impl<'a> From<&NavPosLlhRef<'a>> for Position {

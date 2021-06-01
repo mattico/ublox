@@ -427,9 +427,15 @@ struct AidIni {
 
 impl AidIniBuilder {
     pub fn set_position(mut self, pos: Position) -> Self {
-        self.ecef_x_or_lat = (pos.lat * 10_000_000.0) as i32;
-        self.ecef_y_or_lon = (pos.lon * 10_000_000.0) as i32;
-        self.ecef_z_or_alt = (pos.alt * 100.0) as i32; // Height is in centimeters, here
+        #[cfg(feature = "fixed-point")] {
+            self.ecef_x_or_lat = pos.lat;
+            self.ecef_y_or_lon = pos.lon;
+            self.ecef_z_or_alt = pos.alt;
+        } #[cfg(not(feature = "fixed-point"))] {
+            self.ecef_x_or_lat = (pos.lat * 10_000_000.0) as i32;
+            self.ecef_y_or_lon = (pos.lon * 10_000_000.0) as i32;
+            self.ecef_z_or_alt = (pos.alt * 100.0) as i32; // Height is in centimeters, here
+        }
         self.flags |= (1 << 0) | (1 << 5);
         self
     }

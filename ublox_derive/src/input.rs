@@ -419,6 +419,20 @@ fn parse_fields(fields: Fields) -> syn::Result<Vec<PackField>> {
                     "You map type to the same type",
                 ));
             }
+
+            if cfg!(feature = "fixed-point")
+                && type_is_any(&map_ty.ty, &["f32", "f64"])
+                && type_is_any(
+                    &ty,
+                    &[
+                        "u8", "i8", "u16", "i16", "u32", "i32", "u128", "i128", "usize", "isize",
+                    ],
+                )
+            {
+                map.convert_may_fail = false;
+                map.map_type = None;
+                map.scale = None;
+            }
         }
 
         let map = PackFieldMapDesc::new(map, &ty);
@@ -433,6 +447,20 @@ fn parse_fields(fields: Fields) -> syn::Result<Vec<PackField>> {
     }
 
     Ok(ret)
+}
+
+fn type_is_any(ty: &Type, types: &[&str]) -> bool {
+    if let Type::Path(path) = ty {
+        let segments = &path.path.segments;
+        if segments.len() != 1 {
+            false
+        } else {
+            let ident = segments[0].ident.to_string();
+            types.iter().any(|&t| t == ident)
+        }
+    } else {
+        false
+    }
 }
 
 mod kw {
